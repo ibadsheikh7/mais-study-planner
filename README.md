@@ -66,57 +66,7 @@ ai_study_planner/
 
 ---
 
-## 🛠 How to Run (Step by Step)
-
-### Step 1 — Extract the ZIP file
-After downloading, right-click the `.zip` file and choose **"Extract All"**.
-You will get a folder named `ai_study_planner`.
-
-### Step 2 — Open in VS Code
-1. Open **VS Code**.
-2. Go to **File → Open Folder...**
-3. Select the extracted `ai_study_planner` folder.
-4. Open the built-in terminal: **View → Terminal** (or press `` Ctrl + ` ``).
-
-### Step 3 — Make sure Python is installed
-In the terminal type:
-```bash
-python --version
-```
-If you see a version (like `Python 3.11`), you’re good. If not, install Python from [python.org](https://www.python.org/downloads/) and tick *"Add Python to PATH"* during install.
-
-### Step 4 — (Recommended) Create a Virtual Environment
-```bash
-python -m venv venv
-```
-Activate it:
-- **Windows:** `venv\Scripts\activate`
-- **Mac / Linux:** `source venv/bin/activate`
-
-You will see `(venv)` at the start of your terminal line.
-
-### Step 5 — Install required libraries
-```bash
-pip install -r requirements.txt
-```
-
-### Step 6 — Run the Flask app
-```bash
-python app.py
-```
-
-You will see something like:
-```
- * Running on http://127.0.0.1:5000
-```
-
-### Step 7 — Open in browser
-Open this link in your browser:
-```
-http://127.0.0.1:5000
-```
-
-### Step 8 — Use the app
+ Step  — Use the app
 1. Click **"Create an account"** and register.
 2. Login.
 3. Add some subjects with marks on the dashboard.
@@ -125,7 +75,7 @@ http://127.0.0.1:5000
 
 ---
 
-## 💡 Notes for Teachers
+ 💡 Notes for Teachers
 
 - The AI features are **simple rule-based simulations** (not real ML models) to keep the project beginner-friendly.
 - OOP concepts are clearly demonstrated in the `models/` folder.
@@ -134,5 +84,5 @@ http://127.0.0.1:5000
 
 ---
 
-## 👨‍💻 Made by
+👨‍💻 Made by
 A 2nd Semester CIS Student 💻
