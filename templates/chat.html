@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}AI Chat - MAIS Study Planner{% endblock %}
+{% block content %}
+<section class="card chat-card">
+  <h1>🤖 MAIS AI Study Assistant</h1>
+  <p class="muted">Ask about any subject — Math, Physics, Chemistry, English, OOP, Programming, DSA, Statistics, Calculus, Economics — or ask for study tips, motivation, exam help!</p>
+
+  <div id="chatBox" class="chat-box">
+    <div class="bot-msg">Hi {{ name }}! 👋 I'm your MAIS Study Assistant.
+
+I can give you detailed guides on:
+📐 Math  |  ⚡ Physics  |  🧪 Chemistry  |  📝 English
+💻 OOP  |  🖥️ Programming  |  🔢 DSA  |  📊 Statistics  |  ∫ Calculus  |  💹 Economics
+
+Just type a subject name and I'll give you a full 25-point study guide!
+Also try: "study tips", "exam", "motivation", "time management" 🎯</div>
+  </div>
+
+  <div class="chat-input">
+    <input type="text" id="userMsg" placeholder="Type a subject or question... (e.g. 'help with OOP', 'physics guide')"/>
+    <button id="micBtn" title="Voice Input">🎤</button>
+    <button id="sendBtn" class="primary-btn">Send</button>
+  </div>
+
+  <div class="quick-prompts" style="margin-top:12px; display:flex; flex-wrap:wrap; gap:8px;">
+    <button class="secondary-btn qp" data-msg="math guide">📐 Math</button>
+    <button class="secondary-btn qp" data-msg="physics guide">⚡ Physics</button>
+    <button class="secondary-btn qp" data-msg="chemistry guide">🧪 Chemistry</button>
+    <button class="secondary-btn qp" data-msg="oop guide">💻 OOP</button>
+    <button class="secondary-btn qp" data-msg="programming guide">🖥️ Programming</button>
+    <button class="secondary-btn qp" data-msg="study tip">💡 Study Tips</button>
+    <button class="secondary-btn qp" data-msg="exam">📋 Exam Tips</button>
+    <button class="secondary-btn qp" data-msg="motivation">💪 Motivation</button>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const chatBox = document.getElementById('chatBox');
+  const userMsg = document.getElementById('userMsg');
+  const sendBtn = document.getElementById('sendBtn');
+  const micBtn  = document.getElementById('micBtn');
+
+  function addMsg(text, type) {
+    const div = document.createElement('div');
+    div.className = type + '-msg';
+    div.textContent = text;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function showTyping() {
+    const div = document.createElement('div');
+    div.className = 'bot-msg';
+    div.id = 'typing-indicator';
+    div.textContent = '...';
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    return div;
+  }
+
+  async function sendMsg() {
+    const msg = userMsg.value.trim();
+    if (!msg) return;
+    addMsg(msg, 'user');
+    userMsg.value = '';
+
+    const typingEl = showTyping();
+
+    try {
+      const res = await fetch('/chat_reply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      });
+      const data = await res.json();
+      typingEl.remove();
+      addMsg(data.reply, 'bot');
+    } catch(e) {
+      typingEl.remove();
+      addMsg('Sorry, something went wrong. Please try again.', 'bot');
+    }
+  }
+
+  sendBtn.onclick = sendMsg;
+  userMsg.addEventListener('keypress', e => { if (e.key === 'Enter') sendMsg(); });
+
+  // Quick prompt buttons
+  document.querySelectorAll('.qp').forEach(btn => {
+    btn.addEventListener('click', () => {
+      userMsg.value = btn.getAttribute('data-msg');
+      sendMsg();
+    });
+  });
+
+  // Voice input
+  micBtn.onclick = () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert('Voice not supported in this browser. Try Chrome!'); return; }
+    const r = new SR();
+    r.lang = 'en-US';
+    micBtn.textContent = '🔴';
+    r.onresult = e => {
+      micBtn.textContent = '🎤';
+      userMsg.value = e.results[0][0].transcript;
+      sendMsg();
+    };
+    r.onerror = () => { micBtn.textContent = '🎤'; };
+    r.start();
+  };
+</script>
+{% endblock %}

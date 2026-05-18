@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Login - MAIS Study Planner</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="auth-body">
+  <div class="auth-card">
+    <h1 class="auth-title">👋 Welcome Back</h1>
+    <p class="auth-sub">Login to your MAIS STUDY PLANNER account</p>
+
+    {% if error %}<p class="error-msg">{{ error }}</p>{% endif %}
+
+    <form method="POST">
+      <label>Email</label>
+      <input type="email" name="email" required placeholder="your@email.com">
+
+      <label>Password</label>
+      <input type="password" name="password" required placeholder="••••••">
+
+      <button type="submit" class="primary-btn">Login</button>
+    </form>
+
+    <p class="auth-foot">New here? <a href="{{ url_for('register') }}">Create an account</a></p>
+    <button id="themeBtn" class="theme-btn floating">🌙</button>
+  </div>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

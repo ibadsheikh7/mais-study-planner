@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Smart Planner - MAIS Study Planner{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>🗓 Smart Study Planner</h1>
+  <p class="muted">Enter your exam date, subjects, and plan type. The planner will give you a detailed schedule with exact time slots, breaks, and subject-wise focus based on your weak/strong subjects!</p>
+
+  <form method="POST" class="simple-form">
+    <label>Exam Date</label>
+    <input type="date" name="exam_date" required>
+
+    <label>Subjects (comma separated)</label>
+    <input type="text" name="subjects" placeholder="e.g. Math, Physics, OOP, English, Chemistry" required>
+
+    <label>Plan Type</label>
+    <select name="plan_type">
+      <option value="daily">📅 Daily — detailed day schedule with time slots & breaks</option>
+      <option value="weekly">📆 Weekly — full 7-day timetable with subject assignments</option>
+      <option value="monthly">📅 Monthly — 4-week structured plan with weekly goals</option>
+    </select>
+
+    <button type="submit" class="primary-btn">🚀 Generate My Study Plan</button>
+  </form>
+</section>
+
+{% if plan %}
+<section class="card">
+  <h2>✅ Your {{ plan_type|capitalize }} Study Plan</h2>
+  <p class="muted">Based on your weak/strong subjects from Dashboard. Weak subjects get more time! 💪</p>
+  <div class="plan-box">
+    <ul class="plan-list">
+      {% for p in plan %}<li>{{ p }}</li>{% endfor %}
+    </ul>
+  </div>
+  <div style="margin-top:14px;">
+    <button onclick="window.print()" class="secondary-btn">🖨️ Print This Plan</button>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

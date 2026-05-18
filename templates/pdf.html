@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}PDF Assistant{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>📄 PDF Study Assistant</h1>
+  <p class="muted">Upload your notes/book PDF. AI will give summary, MCQs and important topics.</p>
+
+  <form method="POST" enctype="multipart/form-data" class="simple-form">
+    <input type="file" name="pdf_file" accept=".pdf" required>
+    <button type="submit" class="primary-btn">Upload & Analyze</button>
+  </form>
+</section>
+
+{% if summary %}
+<section class="card">
+  <h2>📝 Summary</h2>
+  <p>{{ summary }}</p>
+</section>
+
+<section class="card">
+  <h2>⭐ Important Topics</h2>
+  <ul>
+    {% for it in important %}<li>{{ it }}</li>{% endfor %}
+  </ul>
+</section>
+
+<section class="card">
+  <h2>❓ MCQ Quiz</h2>
+  {% for q in mcqs %}
+  <div class="mcq">
+    <p><b>Q{{ loop.index }}. {{ q.q }}</b></p>
+    <ul>
+      {% for op in q.options %}<li>{{ op }}</li>{% endfor %}
+    </ul>
+    <p class="ans">Answer: {{ q.ans }}</p>
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+{% endblock %}

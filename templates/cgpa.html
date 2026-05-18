@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}CGPA Calculator{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>🎓 CGPA Calculator</h1>
+  <p class="muted">Enter your subject name, credit hours, and marks you got. The calculator will show your GPA per subject and your overall CGPA.</p>
+  <p class="muted" style="margin-top:4px;">Grade scale: A+/A = 4.0 | A- = 3.7 | B+ = 3.3 | B = 3.0 | B- = 2.7 | C+ = 2.3 | C = 2.0 | C- = 1.7 | D+ = 1.3 | D = 1.0 | F = 0.0</p>
+
+  <form method="POST" class="simple-form" id="cgpaForm">
+    <table class="cgpa-table">
+      <thead>
+        <tr>
+          <th>Subject Name</th>
+          <th>Credit Hours</th>
+          <th>Marks You Got (0–100)</th>
+          <th>Grade (auto or pick)</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="cgpaBody">
+        {% for i in range(6) %}
+        <tr>
+          <td><input type="text" name="course_name" placeholder="e.g. OOP / Math / English"></td>
+          <td><input type="number" name="credit" min="1" max="6" step="1" placeholder="3"></td>
+          <td><input type="number" name="marks_obtained" min="0" max="100" step="1" placeholder="75" class="marks-input" oninput="autoGrade(this)"></td>
+          <td>
+            <select name="grade" class="grade-select">
+              <option value="">--</option>
+              <option>A+</option><option>A</option><option>A-</option>
+              <option>B+</option><option>B</option><option>B-</option>
+              <option>C+</option><option>C</option><option>C-</option>
+              <option>D+</option><option>D</option><option>F</option>
+            </select>
+          </td>
+          <td><button type="button" class="del-btn" onclick="this.closest('tr').remove()">✕</button></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+      <button type="button" class="secondary-btn" id="addRowBtn">+ Add Subject Row</button>
+      <button type="submit" class="primary-btn">📊 Calculate CGPA</button>
+    </div>
+  </form>
+</section>
+
+{% if result %}
+<section class="card">
+  <h2>📊 Your Results</h2>
+  <div class="cgpa-result-box">
+    <div class="cgpa-big">
+      <span class="cgpa-label">Your CGPA</span>
+      <span class="cgpa-value">{{ result.cgpa }} / 4.0</span>
+    </div>
+    <div class="cgpa-meta">
+      <span>Total Credits: <b>{{ result.total_credits }}</b></span>
+      <span>Total Grade Points: <b>{{ result.total_points }}</b></span>
+    </div>
+  </div>
+
+  {% if result.cgpa >= 3.5 %}
+    <p class="cgpa-msg strong-msg">🎉 Outstanding! You're on the Dean's List level. Keep it up!</p>
+  {% elif result.cgpa >= 3.0 %}
+    <p class="cgpa-msg avg-msg">👍 Very Good! You're doing well — aim for 3.5+!</p>
+  {% elif result.cgpa >= 2.5 %}
+    <p class="cgpa-msg avg-msg">📘 Good effort! Focus on weak subjects to push above 3.0.</p>
+  {% elif result.cgpa >= 2.0 %}
+    <p class="cgpa-msg weak-msg">⚠️ Passing but needs improvement. Work harder this semester!</p>
+  {% else %}
+    <p class="cgpa-msg weak-msg">❗ Below passing. Talk to your teacher and make a solid study plan now.</p>
+  {% endif %}
+
+  <h3 style="margin-top:20px;">Subject-wise Breakdown</h3>
+  <table class="cgpa-table">
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Credit Hours</th>
+        <th>Grade</th>
+        <th>Grade Points (GP)</th>
+        <th>Points Earned (Credit × GP)</th>
+        <th>Subject GPA</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>
+        <td>{{ r.name }}</td>
+        <td>{{ r.credit }}</td>
+        <td><b>{{ r.grade }}</b></td>
+        <td>{{ r.gp }}</td>
+        <td>{{ r.points }}</td>
+        <td>
+          <span class="badge {{ 'strong' if r.gp >= 3.0 else ('avg' if r.gp >= 2.0 else 'weak') }}">
+            {{ r.gp }}
+          </span>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+
+<script>
+  // Auto-select grade when marks are entered
+  function autoGrade(input) {
+    const marks = parseFloat(input.value);
+    const row = input.closest('tr');
+    const gradeSelect = row.querySelector('.grade-select');
+    if (isNaN(marks)) return;
+    let grade = 'F';
+    if (marks >= 95) grade = 'A+';
+    else if (marks >= 90) grade = 'A';
+    else if (marks >= 85) grade = 'A-';
+    else if (marks >= 80) grade = 'B+';
+    else if (marks >= 75) grade = 'B';
+    else if (marks >= 70) grade = 'B-';
+    else if (marks >= 65) grade = 'C+';
+    else if (marks >= 60) grade = 'C';
+    else if (marks >= 55) grade = 'C-';
+    else if (marks >= 50) grade = 'D+';
+    else if (marks >= 45) grade = 'D';
+    else grade = 'F';
+    gradeSelect.value = grade;
+  }
+
+  function makeRow() {
+    return `<tr>
+      <td><input type="text" name="course_name" placeholder="e.g. Physics"></td>
+      <td><input type="number" name="credit" min="1" max="6" step="1" placeholder="3"></td>
+      <td><input type="number" name="marks_obtained" min="0" max="100" step="1" placeholder="75" class="marks-input" oninput="autoGrade(this)"></td>
+      <td>
+        <select name="grade" class="grade-select">
+          <option value="">--</option>
+          <option>A+</option><option>A</option><option>A-</option>
+          <option>B+</option><option>B</option><option>B-</option>
+          <option>C+</option><option>C</option><option>C-</option>
+          <option>D+</option><option>D</option><option>F</option>
+        </select>
+      </td>
+      <td><button type="button" class="del-btn" onclick="this.closest('tr').remove()">✕</button></td>
+    </tr>`;
+  }
+
+  document.getElementById('addRowBtn').addEventListener('click', function() {
+    document.getElementById('cgpaBody').insertAdjacentHTML('beforeend', makeRow());
+  });
+</script>
+{% endblock %}

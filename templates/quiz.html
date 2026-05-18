@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}PDF Quiz{% endblock %}
+{% block content %}
+<section class="card">
+  <h1>🧠 PDF Quiz</h1>
+  <p class="muted">Upload your study PDF. Quiz will be generated only from that PDF.</p>
+
+  <form method="POST" enctype="multipart/form-data" class="simple-form">
+    <label>Select PDF File</label>
+    <input type="file" name="pdf_file" accept=".pdf" required>
+    <button type="submit" class="primary-btn">Generate Quiz</button>
+  </form>
+</section>
+
+{% if mcqs %}
+<section class="card">
+  <h2>📘 Quiz from: {{ topic_name }}</h2>
+  {% for q in mcqs %}
+  <div class="mcq">
+    <p><b>Q{{ loop.index }}. {{ q.q }}</b></p>
+    <ul>
+      {% for op in q.options %}<li>{{ op }}</li>{% endfor %}
+    </ul>
+    <p class="ans">Answer: {{ q.ans }}</p>
+  </div>
+  {% endfor %}
+</section>
+{% elif mcqs is not none %}
+<section class="card">
+  <p class="muted">No quiz yet. Please upload a PDF above.</p>
+</section>
+{% endif %}
+{% endblock %}

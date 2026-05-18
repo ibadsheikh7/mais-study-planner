@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<section class="welcome-box">
+  <h1>Hello, {{ name }} 👋</h1>
+  <p>Welcome back! Here's your study overview.</p>
+</section>
+
+<section class="stats-row">
+  <div class="stat-card weak">
+    <h3>Weak Subjects</h3>
+    <p class="big">{{ weak|length }}</p>
+    <small>{{ weak|join(', ') if weak else 'None yet' }}</small>
+  </div>
+  <div class="stat-card avg">
+    <h3>Average Subjects</h3>
+    <p class="big">{{ avg|length }}</p>
+    <small>{{ avg|join(', ') if avg else 'None yet' }}</small>
+  </div>
+  <div class="stat-card strong">
+    <h3>Strong Subjects</h3>
+    <p class="big">{{ strong|length }}</p>
+    <small>{{ strong|join(', ') if strong else 'None yet' }}</small>
+  </div>
+</section>
+
+<section class="grid-2">
+  <div class="card">
+    <h2>📊 Performance Chart</h2>
+    <canvas id="perfChart" height="180"></canvas>
+  </div>
+
+  <div class="card">
+    <h2>➕ Add Subject</h2>
+    <form method="POST" action="{{ url_for('add_subject') }}" class="simple-form">
+      <input type="text" name="sub_name" placeholder="Subject Name (e.g. Math)" required>
+      <input type="number" name="marks" placeholder="Marks (0-100)" min="0" max="100" required>
+      <button type="submit" class="primary-btn">Add</button>
+    </form>
+  </div>
+</section>
+
+<section class="card">
+  <h2>📘 Your Subjects</h2>
+  {% if subjects %}
+  <table class="data-table">
+    <tr><th>Subject</th><th>Marks</th><th>Level</th></tr>
+    {% for s in subjects %}
+    <tr>
+      <td>{{ s.name }}</td>
+      <td>{{ s.marks }}</td>
+      <td>
+        {% set lvl = s.get_level() %}
+        <span class="badge {{ lvl|lower }}">{{ lvl }}</span>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="muted">No subjects yet. Add one above to get started.</p>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  // Simple chart using Chart.js
+  const labels = {{ chart_labels|tojson }};
+  const data = {{ chart_data|tojson }};
+  if (document.getElementById('perfChart') && labels.length) {
+    new Chart(document.getElementById('perfChart'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Marks',
+          data: data,
+          backgroundColor: 'rgba(120, 130, 220, 0.7)',
+          borderRadius: 8
+        }]
+      },
+      options: { responsive: true, scales: { y: { beginAtZero: true, max: 100 } } }
+    });
+  }
+</script>
+{% endblock %}
