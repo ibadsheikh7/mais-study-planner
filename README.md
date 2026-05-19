@@ -1,6 +1,6 @@
 # 📚 MAIS STUDY PLANNER (MAIS STUDY PLANNER)
 
-> A simple AI-powered study planner web app built by a 2nd semester CS student using **Python Flask**, **HTML**, **CSS**, a little **JavaScript**, and **SQLite**.
+> A simple MAIS study planner web app built by a 2nd semester CS student using **Python Flask**, **HTML**, **CSS**, a little **JavaScript**, and **SQLite**.
 
 This project uses **OOP (Object Oriented Programming)** concepts learned in 2nd semester:
 - Classes & Objects
