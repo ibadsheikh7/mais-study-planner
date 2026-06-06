@@ -1,4 +1,5 @@
-# Student class - shows OOP: Class, Object, Constructor, Encapsulation
+ # Student class - shows OOP: Class, Object, Constructor, Encapsulation
+
 import sqlite3
 
 
@@ -20,33 +21,58 @@ class Student(Person):
     def __init__(self, name, email, password, semester):
         # Calling parent constructor
         super().__init__(name, email)
-        self.__password = password  # private = Encapsulation
+
+        # Private variable = Encapsulation
+        self.__password = password
         self.semester = semester
 
-    # Getter (encapsulation)
+    # Getter method
     def get_password(self):
         return self.__password
 
+    # Save student in database
     def save_to_db(self, db_path):
-        try:
-            conn = sqlite3.connect(db_path)
-            c = conn.cursor()
-            c.execute("INSERT INTO students (name, email, password, semester) VALUES (?, ?, ?, ?)",
-                      (self.name, self.email, self.__password, self.semester))
-            conn.commit()
-            conn.close()
-            return True
-        except Exception as e:
-            print("Error:", e)
-            return False
 
-    @staticmethod
-    def login(db_path, email, password):
         conn = sqlite3.connect(db_path)
         c = conn.cursor()
-        c.execute("SELECT id, name FROM students WHERE email=? AND password=?", (email, password))
+
+        try:
+            c.execute(
+                "INSERT INTO students (name, email, password, semester) VALUES (?, ?, ?, ?)",
+                (self.name, self.email, self.__password, self.semester)
+            )
+
+            conn.commit()
+            return True
+
+        except Exception as e:
+            print("Database Error:", e)
+            return False
+
+        finally:
+            conn.close()
+
+    # Login method
+    @staticmethod
+    def login(db_path, email, password):
+
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+
+        c.execute(
+            "SELECT id, name, email FROM students WHERE email=? AND password=?",
+            (email, password)
+        )
+
         row = c.fetchone()
+
         conn.close()
+
         if row:
-            return {"id": row[0], "name": row[1]}
+            return {
+                "id": row[0],
+                "name": row[1],
+                "email": row[2]
+            }
+
         return None

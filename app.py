@@ -74,7 +74,7 @@ def register():
         password = request.form['password']
         semester = request.form['semester']
 
-        # Using OOP Student class (constructor)
+       # Using OOP Student class (constructor)
         new_student = Student(name, email, password, semester)
         ok = new_student.save_to_db(DB_PATH)
 
